@@ -9,6 +9,7 @@ import {
   IonItem,
   IonLabel,
   IonModal,
+  IonRow,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -16,6 +17,9 @@ import { useContext } from "react";
 import { TodoContext } from "../../context/TodoContext";
 
 const TodoModalView = ({
+  title,
+  note,
+  tags,
   deadline,
   showDeadline,
   onShowDeadline,
@@ -26,7 +30,7 @@ const TodoModalView = ({
   onSaveTodo,
   resetInputs,
 }) => {
-  const { openModal, closeTodoModal } = useContext(TodoContext);
+  const { openModal, closeTodoModal, mode } = useContext(TodoContext);
 
   return (
     <IonModal
@@ -40,13 +44,14 @@ const TodoModalView = ({
     >
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Add New Todo</IonTitle>
+          <IonTitle>{mode === "edit" ? "Edit Todo" : "Add New Todo"}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent class="ion-padding">
         <IonItem>
           <IonLabel position="floating">Title</IonLabel>
           <IonInput
+            value={title}
             clearInput
             placeholder="Enter Todo Title"
             onIonChange={(e) => onChangeTitle(e.detail.value)}
@@ -55,6 +60,7 @@ const TodoModalView = ({
         <IonItem>
           <IonLabel position="floating">Note</IonLabel>
           <IonInput
+            value={note}
             clearInput
             placeholder="Enter Todo Note"
             onIonChange={(e) => onChangeNote(e.detail.value)}
@@ -63,6 +69,7 @@ const TodoModalView = ({
         <IonItem>
           <IonLabel position="floating">Tags</IonLabel>
           <IonInput
+            value={tags.join(", ")}
             clearInput
             placeholder="Enter Tags (separated by coma)"
             onIonChange={(e) => onChangeTags(e.detail.value)}
@@ -88,25 +95,29 @@ const TodoModalView = ({
           </IonItem>
         ) : null}
         <IonItem className="ion-padding-bottom">
-          <IonButton
-            slot="end"
-            fill="outline"
-            expand="block"
-            className="ion-no-margin"
-            size="default"
-            onClick={closeTodoModal}
-          >
-            Close
-          </IonButton>
-          <IonButton
-            slot="end"
-            expand="block"
-            className="ion-margin-left"
-            size="default"
-            onClick={onSaveTodo}
-          >
-            Simpan
-          </IonButton>
+          <IonRow slot="end">
+            <IonButton
+              fill="outline"
+              expand="block"
+              size="default"
+              onClick={closeTodoModal}
+            >
+              Close
+            </IonButton>
+            {mode === "edit" ? (
+              <IonButton
+                expand="block"
+                size="default"
+                color="danger"
+                onClick={closeTodoModal}
+              >
+                Delete
+              </IonButton>
+            ) : null}
+            <IonButton expand="block" size="default" onClick={onSaveTodo}>
+              {mode === "edit" ? "Edit" : "Save"}
+            </IonButton>
+          </IonRow>
         </IonItem>
       </IonContent>
     </IonModal>

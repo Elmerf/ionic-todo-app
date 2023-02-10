@@ -15,7 +15,7 @@ import { useContext } from "react";
 import { TodoContext } from "../context/TodoContext";
 
 const TodoList = () => {
-  const { getTodos } = useContext(TodoContext);
+  const { getTodos, openTodoModal } = useContext(TodoContext);
 
   return (
     <IonContent fullscreen className="ion-padding">
@@ -25,6 +25,7 @@ const TodoList = () => {
           className="ion-activatable"
           style={{ position: "relative" }}
           key={todo.id}
+          onClick={() => openTodoModal(todo.id)}
         >
           <IonCardHeader>
             <IonCardSubtitle>

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TodoModalView from "./TodoModal.View";
 import { format, utcToZonedTime } from "date-fns-tz";
 import request from "../../lib/request";
@@ -25,13 +25,24 @@ const timeWithOffset = (value) => {
 };
 
 const TodoModal = () => {
-  const { closeTodoModal, setRefetch } = useContext(TodoContext);
+  const { closeTodoModal, setRefetch, getTodos, selectedId, mode } =
+    useContext(TodoContext);
 
   const [showDeadline, setShowDeadline] = useState(false);
   const [title, setTitle] = useState(null);
   const [note, setNote] = useState(null);
   const [tags, setTags] = useState([]);
   const [deadline, setDeadline] = useState(null);
+
+  useEffect(() => {
+    const selectedTodo = getTodos(selectedId);
+
+    setShowDeadline(selectedTodo?.deadline ? true : false);
+    setTitle(selectedTodo?.title ?? null);
+    setNote(selectedTodo?.note ?? null);
+    setTags(selectedTodo?.tags ?? []);
+    setDeadline(selectedTodo?.deadline ?? null);
+  }, [getTodos, selectedId]);
 
   const resetInputs = () => {
     setShowDeadline(false);
@@ -41,7 +52,10 @@ const TodoModal = () => {
     setDeadline(null);
   };
 
-  const handleShowDeadline = (value) => setShowDeadline(value);
+  const handleShowDeadline = (value) => {
+    if (!value) setDeadline(null);
+    setShowDeadline(value);
+  };
   const handleChangeTitle = (value) => setTitle(value);
   const handleChangeNote = (value) => setNote(value);
   const handleChangeTags = (value) => {
@@ -55,18 +69,20 @@ const TodoModal = () => {
   const handleChangeDeadline = (value) => setDeadline(timeWithOffset(value));
 
   const handleSaveTodo = () => {
-    request("/todos", {
-      method: "POST",
+    const req = request(mode === "edit" ? `/todos/${selectedId}` : "/todos", {
+      method: mode === "edit" ? "PUT" : "POST",
       data: JSON.stringify({
         title,
         note,
         tags,
         deadline,
         is_done: false,
-        created_at: new Date().toISOString(),
+        created_at: mode === "edit" ? undefined : new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }),
-    }).finally(() => {
+    });
+
+    req.finally(() => {
       closeTodoModal();
       setRefetch(true);
     });
@@ -74,6 +90,9 @@ const TodoModal = () => {
 
   return (
     <TodoModalView
+      title={title}
+      note={note}
+      tags={tags}
       deadline={deadline}
       showDeadline={showDeadline}
       onShowDeadline={handleShowDeadline}

@@ -7,6 +7,8 @@ const TodoProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [refetch, setRefetch] = useState(true);
+  const [mode, setMode] = useState("create");
+  const [selectedId, setSelectedId] = useState(-1);
 
   useEffect(() => {
     if (refetch) {
@@ -17,14 +19,34 @@ const TodoProvider = ({ children }) => {
     }
   }, [refetch]);
 
-  const getTodos = () => todos;
+  const getTodos = (id) => (id ? todos.find((todo) => todo.id === id) : todos);
 
-  const openTodoModal = () => setOpenModal(true);
-  const closeTodoModal = () => setOpenModal(false);
+  const openTodoModal = (id) => {
+    if (typeof id === "number") {
+      setMode("edit");
+      setSelectedId(id);
+    }
+
+    setOpenModal(true);
+  };
+  
+  const closeTodoModal = () => {
+    setMode("create");
+    setSelectedId(-1);
+    setOpenModal(false);
+  };
 
   return (
     <TodoContext.Provider
-      value={{ getTodos, openTodoModal, closeTodoModal, openModal, setRefetch }}
+      value={{
+        getTodos,
+        openTodoModal,
+        closeTodoModal,
+        openModal,
+        setRefetch,
+        mode,
+        selectedId,
+      }}
     >
       {children}
     </TodoContext.Provider>
