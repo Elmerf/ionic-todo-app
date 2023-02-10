@@ -29,6 +29,7 @@ const TodoModalView = ({
   onChangeDeadline,
   onSaveTodo,
   resetInputs,
+  onDeleteTodo,
 }) => {
   const { openModal, closeTodoModal, mode } = useContext(TodoContext);
 
@@ -109,7 +110,7 @@ const TodoModalView = ({
                 expand="block"
                 size="default"
                 color="danger"
-                onClick={closeTodoModal}
+                onClick={onDeleteTodo}
               >
                 Delete
               </IonButton>

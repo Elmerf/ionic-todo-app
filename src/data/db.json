@@ -12,17 +12,6 @@
       "id": 1
     },
     {
-      "title": "Watching some Movies",
-      "note": "Action Move",
-      "tags": [
-        "hobby"
-      ],
-      "deadline": null,
-      "is_done": false,
-      "updated_at": "2023-02-10T01:46:11.394Z",
-      "id": 2
-    },
-    {
       "title": "Newest Todo",
       "note": "My Note",
       "tags": [

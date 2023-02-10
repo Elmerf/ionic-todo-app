@@ -88,6 +88,17 @@ const TodoModal = () => {
     });
   };
 
+  const handleDeleteTodo = () => {
+    const req = request(`/todos/${selectedId}`, {
+      method: "DELETE",
+    });
+
+    req.finally(() => {
+      closeTodoModal();
+      setRefetch(true);
+    });
+  };
+
   return (
     <TodoModalView
       title={title}
@@ -102,6 +113,7 @@ const TodoModal = () => {
       onChangeDeadline={handleChangeDeadline}
       onSaveTodo={handleSaveTodo}
       resetInputs={resetInputs}
+      onDeleteTodo={handleDeleteTodo}
     />
   );
 };
